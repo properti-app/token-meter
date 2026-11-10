@@ -46,7 +46,8 @@
   .row b { display: block; }
   .row span { color: #555; font-size: 12px; }
   .history { margin-top: 20px; text-align: left; }
-  .history h2 { font-size: 13px; margin-bottom: 8px; }
+  .history h2 { font-size: 13px; margin-bottom: 8px; cursor: pointer; user-select: none; }
+  .history ul.hidden { display: none; }
   .history ul { list-style: none; }
   .history li { background: #fff; border: 1px solid #000; padding: 10px 14px; margin-bottom: 8px; }
   .note { color: #555; font-size: 12px; margin-top: 20px; text-align: left; }
@@ -120,8 +121,8 @@
       <div><b id="countdown">-</b><span>Menuju reset</span></div>
     </div>
     <div class="history">
-      <h2>Riwayat</h2>
-      <ul id="history"><li>Memuat riwayat...</li></ul>
+      <h2 id="historyToggle">▸ Riwayat</h2>
+      <ul id="history" class="hidden"><li>Memuat riwayat...</li></ul>
     </div>
     <p class="note">Diperbarui 5x sehari (08:00, 11:00, 14:00, 17:00, 20:00 WIB). Pengecekan status tidak memakan token. Ini persentase pemakaian terhadap jatah mingguan, bukan jumlah token per pesan. Token per operasi tidak dilaporkan.</p>
   </div>
@@ -167,6 +168,12 @@ async function load() {
     document.getElementById("status").textContent = "Data belum bisa dimuat. Coba muat ulang halaman.";
   }
 }
+document.getElementById("historyToggle").addEventListener("click", function () {
+  var list = document.getElementById("history");
+  list.classList.toggle("hidden");
+  var open = !list.classList.contains("hidden");
+  this.textContent = (open ? "▾ " : "▸ ") + "Riwayat";
+});
 load();
 </script>
 </body>
