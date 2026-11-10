@@ -1,0 +1,32 @@
+[
+  {
+    "checked_at_utc": "2026-11-08T10:50:00Z",
+    "raw": "The user does not have a subscription. Usage: 36% of free weekly limit. Weekly limit resets Nov 11 at 12:17 PM WIB",
+    "reset_iso": "2026-11-11T12:17:00+07:00",
+    "usage_pct": 36
+  },
+  {
+    "checked_at_utc": "2026-11-08T10:51:35Z",
+    "usage_pct": 36,
+    "reset_iso": "2026-11-11T12:17:00+07:00",
+    "raw": "The user does not have a subscription. Usage: 36% of free weekly limit. Weekly limit resets Nov 11 at 12:17 PM WIB"
+  },
+  {
+    "checked_at_utc": "2026-11-09T04:51:08Z",
+    "usage_pct": 47,
+    "reset_iso": "2026-11-11T12:17:00+07:00",
+    "raw": "The user does not have a subscription. Usage: 47% of free weekly limit. Weekly limit resets Nov 11 at 12:17 PM WIB"
+  },
+  {
+    "checked_at_utc": "2026-11-09T08:27:35Z",
+    "usage_pct": 50,
+    "reset_iso": "2026-11-11T12:17:00+07:00",
+    "raw": "The user does not have a subscription. Usage: 50% of free weekly limit. Weekly limit resets Nov 11 at 12:17 PM WIB"
+  },
+  {
+    "checked_at_utc": "2026-11-10T10:48:39Z",
+    "usage_pct": 75,
+    "reset_iso": "2026-11-11T12:17:00+07:00",
+    "raw": "The user does not have a subscription. Usage: 75% of free weekly limit. Weekly limit resets Nov 11 at 12:17 PM WIB"
+  }
+]
