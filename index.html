@@ -58,6 +58,18 @@
   body.embedded .window { max-width: none; border: none; box-shadow: none; margin: 0; }
   body.embedded .titlebar { display: none; }
   body.embedded .content { max-width: 720px; margin: 0 auto; padding: 24px 20px 32px; }
+  /* Desktop di dalam iframe: buat lebih kecil dan proporsional,
+     sejalan dengan jendela Mac jadul yang serba ringkas. */
+  @media (min-width: 641px) {
+    body.embedded .content { max-width: 520px; padding: 20px 16px 28px; }
+    body.embedded .pct { font-size: 2.25rem; }
+    body.embedded .bar { height: 12px; margin: 12px 0 6px; }
+    body.embedded .row { margin-top: 12px; gap: 10px; }
+    body.embedded .row div { padding: 8px 10px; }
+    body.embedded .history { margin-top: 16px; }
+    body.embedded .history li { padding: 8px 12px; margin-bottom: 6px; }
+    body.embedded .note { margin-top: 16px; }
+  }
   @media (max-width: 480px) {
     body { padding: 24px 12px 48px; }
     .row { flex-direction: column; }
