@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Token Meter Muse</title>
-<meta name="description" content="Pemakaian jatah mingguan gratis Muse: persentase terpakai, sisa jatah, dan hitung mundur ke reset.">
+<title>Token Meter</title>
+<meta name="description" content="Pemakaian jatah mingguan gratis: persentase terpakai, sisa jatah, dan hitung mundur ke reset.">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { min-height: 100%; }
@@ -60,7 +60,7 @@
 </head>
 <body>
 <div class="window">
-  <div class="titlebar"><span class="closebox"></span><span class="title">Token Meter Muse</span></div>
+  <div class="titlebar"><span class="closebox"></span><span class="title">Token Meter</span></div>
   <div class="content">
     <div class="pct" id="pct">...</div>
     <div class="bar"><div id="fill" style="width: 0%"></div></div>
@@ -73,7 +73,7 @@
       <h2>Riwayat</h2>
       <ul id="history"><li>Memuat riwayat...</li></ul>
     </div>
-    <p class="note">Diperbarui 5x sehari (08:00, 11:00, 14:00, 17:00, 20:00 WIB). Pengecekan status tidak memakan token. Ini persentase pemakaian terhadap jatah mingguan, bukan jumlah token per pesan. Muse tidak melaporkan token per operasi.</p>
+    <p class="note">Diperbarui 5x sehari (08:00, 11:00, 14:00, 17:00, 20:00 WIB). Pengecekan status tidak memakan token. Ini persentase pemakaian terhadap jatah mingguan, bukan jumlah token per pesan. Token per operasi tidak dilaporkan.</p>
   </div>
 </div>
 <script>
