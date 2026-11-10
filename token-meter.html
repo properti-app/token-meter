@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Token Meter</title>
+<meta name="description" content="Pemakaian jatah mingguan gratis: persentase terpakai, sisa jatah, dan hitung mundur ke reset.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { min-height: 100%; }
+  body {
+    font-family: Geneva, Verdana, "Segoe UI", sans-serif;
+    font-size: 13px;
+    color: #000;
+    background-color: #e3e3e3;
+    background-image: radial-gradient(#c6c6c6 1px, transparent 1.2px);
+    background-size: 5px 5px;
+    line-height: 1.6;
+    padding: 40px 16px 64px;
+  }
+  .window {
+    max-width: 560px; margin: 0 auto;
+    background: #fff; border: 1px solid #000;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.25);
+  }
+  .titlebar {
+    height: 22px; position: relative;
+    background: repeating-linear-gradient(to bottom, #fff 0px, #fff 2px, #000 2px, #000 3px);
+    border-bottom: 1px solid #000;
+  }
+  .titlebar .title {
+    position: absolute; left: 50%; top: 0; transform: translateX(-50%);
+    background: #fff; padding: 2px 10px; font-size: 12px; font-weight: bold;
+    line-height: 18px; white-space: nowrap;
+  }
+  .titlebar .closebox {
+    position: absolute; left: 6px; top: 5px; width: 11px; height: 11px;
+    background: #fff; border: 1px solid #000;
+  }
+  .content { padding: 16px 18px; text-align: center; }
+  .gauge { max-width: 320px; margin: 0 auto; }
+  .gauge svg { width: 100%; height: auto; display: block; }
+  #status { color: #555; font-size: 12px; }
+  .row { display: flex; justify-content: space-between; gap: 12px; margin-top: 16px; text-align: left; }
+  .row div { flex: 1; background: #eee; border: 1px solid #000; padding: 12px; }
+  .row b { display: block; }
+  .row span { color: #555; font-size: 12px; }
+  .history { margin-top: 20px; text-align: left; }
+  .history h2 { font-size: 13px; margin-bottom: 8px; cursor: pointer; user-select: none; }
+  .history ul.hidden { display: none; }
+  .history ul { list-style: none; }
+  .history li { background: #fff; border: 1px solid #000; padding: 10px 14px; margin-bottom: 8px; }
+  .note { color: #555; font-size: 12px; margin-top: 20px; text-align: left; }
+  /* Saat dibuka di dalam iframe (mis. jendela Apps yoganugroho.com),
+     hilangkan frame dalam supaya tidak double frame. Jendela luar
+     sudah memberi titlebar dan border. */
+  body.embedded { background: #fff; background-image: none; padding: 0; }
+  body.embedded .window { max-width: none; border: none; box-shadow: none; margin: 0; }
+  body.embedded .titlebar { display: none; }
+  body.embedded .content { max-width: 720px; margin: 0 auto; padding: 24px 20px 32px; }
+  /* Desktop di dalam iframe: buat lebih kecil dan proporsional,
+     sejalan dengan jendela Mac jadul yang serba ringkas. */
+  @media (min-width: 641px) {
+    body.embedded .content { max-width: 520px; padding: 20px 16px 28px; }
+    body.embedded .gauge { max-width: 300px; }
+    body.embedded .row { margin-top: 12px; gap: 10px; }
+    body.embedded .row div { padding: 8px 10px; }
+    body.embedded .history { margin-top: 16px; }
+    body.embedded .history li { padding: 8px 12px; margin-bottom: 6px; }
+    body.embedded .note { margin-top: 16px; }
+  }
+  @media (max-width: 480px) {
+    body { padding: 24px 12px 48px; }
+    /* Keep the two stat boxes side by side on phones too (no column
+       stacking): the content is short, so two narrow boxes fit and the
+       page stays compact instead of leaving a wide empty gap. */
+    .row { gap: 8px; }
+    .row div { padding: 10px; }
+  }
+</style>
+</head>
+<body>
+<script>if (window.self !== window.top) document.body.classList.add("embedded");</script>
+<div class="window">
+  <div class="titlebar"><span class="closebox"></span><span class="title">Token Meter</span></div>
+  <div class="content">
+    <div class="gauge">
+      <svg viewBox="0 0 320 220" role="img" aria-label="Gauge pemakaian jatah mingguan">
+        <path d="M20 165 A140 140 0 0 1 300 165 Z" fill="#fff" stroke="#000" stroke-width="2"/>
+        <path id="usedArc" d="" fill="none" stroke="#000" stroke-width="10"/>
+        <g stroke="#000" stroke-width="1.5">
+          <line x1="26.8" y1="121.7" x2="32.6" y2="123.6"/>
+          <line x1="46.7" y1="82.7" x2="51.6" y2="86.2"/>
+          <line x1="77.7" y1="51.7" x2="81.2" y2="56.6"/>
+          <line x1="116.7" y1="31.8" x2="118.6" y2="37.6"/>
+          <line x1="203.3" y1="31.8" x2="201.4" y2="37.6"/>
+          <line x1="242.3" y1="51.7" x2="238.8" y2="56.6"/>
+          <line x1="273.3" y1="82.7" x2="268.4" y2="86.2"/>
+          <line x1="293.2" y1="121.7" x2="287.4" y2="123.6"/>
+        </g>
+        <g stroke="#000" stroke-width="2.5">
+          <line x1="20" y1="165" x2="32" y2="165"/>
+          <line x1="61" y1="66" x2="69.5" y2="74.5"/>
+          <line x1="160" y1="25" x2="160" y2="37"/>
+          <line x1="259" y1="66" x2="250.5" y2="74.5"/>
+          <line x1="300" y1="165" x2="288" y2="165"/>
+        </g>
+        <g font-family="Geneva, Verdana, sans-serif" font-size="12" text-anchor="middle" dominant-baseline="central">
+          <text x="48" y="153">0</text>
+          <text x="81" y="86">25</text>
+          <text x="160" y="53">50</text>
+          <text x="239" y="86">75</text>
+          <text x="272" y="153">100</text>
+        </g>
+        <line id="needle" x1="160" y1="165" x2="160" y2="65" stroke="#000" stroke-width="3"/>
+        <circle cx="160" cy="165" r="7" fill="#000"/>
+        <circle cx="160" cy="165" r="2.5" fill="#fff"/>
+        <text x="160" y="186" font-family="Geneva, Verdana, sans-serif" font-size="11" letter-spacing="2" text-anchor="middle">TERPAKAI</text>
+        <text id="pctLabel" x="160" y="208" font-family="Geneva, Verdana, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" dominant-baseline="central">75%</text>
+      </svg>
+    </div>
+    <p id="status">Memuat data...</p>
+    <div class="row">
+      <div><b id="remain">-</b><span>Sisa jatah</span></div>
+      <div><b id="countdown">-</b><span>Menuju reset</span></div>
+    </div>
+    <div class="history">
+      <h2 id="historyToggle">▸ Riwayat</h2>
+      <ul id="history" class="hidden"><li>Memuat riwayat...</li></ul>
+    </div>
+    <p class="note">Diperbarui 5x sehari (08:00, 11:00, 14:00, 17:00, 20:00 WIB). Pengecekan status tidak memakan token. Ini persentase pemakaian terhadap jatah mingguan, bukan jumlah token per pesan. Token per operasi tidak dilaporkan.</p>
+  </div>
+</div>
+<script>
+function polar(cx, cy, r, deg) {
+  var rad = deg * Math.PI / 180;
+  return [cx + r * Math.cos(rad), cy - r * Math.sin(rad)];
+}
+function setGauge(pct) {
+  var cx = 160, cy = 165;
+  var deg = 180 - 1.8 * pct;
+  var tip = polar(cx, cy, 100, deg);
+  var needle = document.getElementById("needle");
+  needle.setAttribute("x2", tip[0].toFixed(1));
+  needle.setAttribute("y2", tip[1].toFixed(1));
+  var start = polar(cx, cy, 122, 180);
+  var end = polar(cx, cy, 122, deg);
+  var d = "M " + start[0].toFixed(1) + " " + start[1].toFixed(1) +
+          " A 122 122 0 0 1 " + end[0].toFixed(1) + " " + end[1].toFixed(1);
+  document.getElementById("usedArc").setAttribute("d", d);
+  document.getElementById("pctLabel").textContent = pct + "%";
+}
+async function load() {
+  try {
+    const s = await (await fetch("token-status.json")).json();
+    const h = await (await fetch("token-history.json")).json();
+    setGauge(s.usage_pct);
+    document.getElementById("remain").textContent = (100 - s.usage_pct) + "%";
+    const reset = new Date(s.reset_iso);
+    document.getElementById("status").textContent = "Terakhir dicek " + new Date(s.checked_at_utc).toLocaleString("id-ID", { timeZone: "Asia/Jakarta" }) + " WIB. Reset " + reset.toLocaleString("id-ID", { timeZone: "Asia/Jakarta" }) + " WIB.";
+    function tick() {
+      const ms = reset - new Date();
+      if (ms <= 0) { document.getElementById("countdown").textContent = "Sudah reset"; return; }
+      const d = Math.floor(ms / 86400000), h2 = Math.floor(ms / 3600000) % 24, m = Math.floor(ms / 60000) % 60;
+      document.getElementById("countdown").textContent = d > 0 ? d + " hari " + h2 + " jam" : h2 + " jam " + m + " mnt";
+    }
+    tick(); setInterval(tick, 60000);
+    document.getElementById("history").innerHTML = h.slice(-8).reverse().map(function (e) {
+      return "<li>" + e.usage_pct + "% &middot; " + new Date(e.checked_at_utc).toLocaleString("id-ID", { timeZone: "Asia/Jakarta" }) + " WIB</li>";
+    }).join("") || "<li>Belum ada riwayat.</li>";
+  } catch (err) {
+    document.getElementById("status").textContent = "Data belum bisa dimuat. Coba muat ulang halaman.";
+  }
+}
+document.getElementById("historyToggle").addEventListener("click", function () {
+  var list = document.getElementById("history");
+  list.classList.toggle("hidden");
+  var open = !list.classList.contains("hidden");
+  this.textContent = (open ? "▾ " : "▸ ") + "Riwayat";
+});
+load();
+</script>
+</body>
+</html>

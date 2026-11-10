@@ -71,7 +71,11 @@
   }
   @media (max-width: 480px) {
     body { padding: 24px 12px 48px; }
-    .row { flex-direction: column; }
+    /* Keep the two stat boxes side by side on phones too (no column
+       stacking): the content is short, so two narrow boxes fit and the
+       page stays compact instead of leaving a wide empty gap. */
+    .row { gap: 8px; }
+    .row div { padding: 10px; }
   }
 </style>
 </head>
