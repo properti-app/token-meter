@@ -6,32 +6,62 @@
 <title>Token Meter Muse</title>
 <meta name="description" content="Pemakaian jatah mingguan gratis Muse: persentase terpakai, sisa jatah, dan hitung mundur ke reset.">
 <style>
-  :root { --navy: #1b2a4a; --orange: #f97316; --cream: #fffaf0; --ink: #222; --muted: #666; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); background: var(--cream); line-height: 1.6; }
-  main { max-width: 560px; margin: 0 auto; padding: 40px 20px 64px; text-align: center; }
-  h1 { color: var(--navy); font-size: 1.5rem; margin-bottom: 6px; }
-  p.sub { color: var(--muted); margin-bottom: 24px; }
-  .gauge { background: #fff; border: 1px solid #eee; border-radius: 20px; padding: 28px 24px; }
-  .pct { font-size: 3rem; font-weight: 700; color: var(--navy); }
-  .bar { height: 18px; background: #eee; border-radius: 999px; overflow: hidden; margin: 16px 0 8px; }
-  .bar > div { height: 100%; background: var(--orange); border-radius: 999px; }
+  html, body { min-height: 100%; }
+  body {
+    font-family: Geneva, Verdana, "Segoe UI", sans-serif;
+    font-size: 13px;
+    color: #000;
+    background-color: #e3e3e3;
+    background-image: radial-gradient(#c6c6c6 1px, transparent 1.2px);
+    background-size: 5px 5px;
+    line-height: 1.6;
+    padding: 40px 16px 64px;
+  }
+  .window {
+    max-width: 560px; margin: 0 auto;
+    background: #fff; border: 1px solid #000;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.25);
+  }
+  .titlebar {
+    height: 22px; position: relative;
+    background: repeating-linear-gradient(to bottom, #fff 0px, #fff 2px, #000 2px, #000 3px);
+    border-bottom: 1px solid #000;
+  }
+  .titlebar .title {
+    position: absolute; left: 50%; top: 0; transform: translateX(-50%);
+    background: #fff; padding: 2px 10px; font-size: 12px; font-weight: bold;
+    line-height: 18px; white-space: nowrap;
+  }
+  .titlebar .closebox {
+    position: absolute; left: 6px; top: 5px; width: 11px; height: 11px;
+    background: #fff; border: 1px solid #000;
+  }
+  .content { padding: 16px 18px; text-align: center; }
+  .pct { font-size: 3rem; font-weight: bold; line-height: 1.2; }
+  .bar { border: 1px solid #000; height: 14px; background: #fff; margin: 16px 0 8px; text-align: left; }
+  .bar > div { height: 100%; background: #000; }
+  #status { color: #555; font-size: 12px; }
   .row { display: flex; justify-content: space-between; gap: 12px; margin-top: 16px; text-align: left; }
-  .row div { flex: 1; background: var(--cream); border-radius: 12px; padding: 12px; }
-  .row b { display: block; color: var(--navy); }
-  .row span { color: var(--muted); font-size: .9rem; }
+  .row div { flex: 1; background: #eee; border: 1px solid #000; padding: 12px; }
+  .row b { display: block; }
+  .row span { color: #555; font-size: 12px; }
   .history { margin-top: 20px; text-align: left; }
-  .history h2 { color: var(--navy); font-size: 1.1rem; margin-bottom: 8px; }
+  .history h2 { font-size: 13px; margin-bottom: 8px; }
   .history ul { list-style: none; }
-  .history li { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; font-size: .95rem; }
-  .note { color: var(--muted); font-size: .9rem; margin-top: 20px; }
+  .history li { background: #fff; border: 1px solid #000; padding: 10px 14px; margin-bottom: 8px; }
+  .note { color: #555; font-size: 12px; margin-top: 20px; text-align: left; }
+  @media (max-width: 480px) {
+    body { padding: 24px 12px 48px; }
+    .row { flex-direction: column; }
+    .pct { font-size: 2.5rem; }
+  }
 </style>
 </head>
 <body>
-<main>
-  <h1>Token Meter Muse</h1>
-  <p class="sub">Jatah mingguan gratis, diperbarui tiap 15 menit. Pengecekan status tidak memakan token.</p>
-  <div class="gauge">
+<div class="window">
+  <div class="titlebar"><span class="closebox"></span><span class="title">Token Meter Muse</span></div>
+  <div class="content">
     <div class="pct" id="pct">...</div>
     <div class="bar"><div id="fill" style="width: 0%"></div></div>
     <p id="status">Memuat data...</p>
@@ -39,13 +69,13 @@
       <div><b id="remain">-</b><span>Sisa jatah</span></div>
       <div><b id="countdown">-</b><span>Menuju reset</span></div>
     </div>
+    <div class="history">
+      <h2>Riwayat</h2>
+      <ul id="history"><li>Memuat riwayat...</li></ul>
+    </div>
+    <p class="note">Diperbarui 5x sehari (08:00, 11:00, 14:00, 17:00, 20:00 WIB). Pengecekan status tidak memakan token. Ini persentase pemakaian terhadap jatah mingguan, bukan jumlah token per pesan. Muse tidak melaporkan token per operasi.</p>
   </div>
-  <div class="history">
-    <h2>Riwayat</h2>
-    <ul id="history"><li>Memuat riwayat...</li></ul>
-  </div>
-  <p class="note">Ini persentase pemakaian terhadap jatah mingguan, bukan jumlah token per pesan. Muse tidak melaporkan token per operasi.</p>
-</main>
+</div>
 <script>
 async function load() {
   try {
