@@ -70,5 +70,17 @@
     "usage_pct": 3,
     "reset_iso": "2026-11-11T12:17:00+07:00",
     "raw": "The user does not have a subscription. Usage: 3% of free weekly limit. Weekly limit resets Nov 18 at 12:17 PM WIB"
+  },
+  {
+    "checked_at_utc": "2026-11-12T03:28:29Z",
+    "usage_pct": 8,
+    "reset_iso": "2026-11-11T12:17:00+07:00",
+    "raw": "The user does not have a subscription. Usage: 8% of free weekly limit. Weekly limit resets Nov 18 at 12:17 PM WIB"
+  },
+  {
+    "checked_at_utc": "2026-11-12T03:56:19Z",
+    "usage_pct": 9,
+    "reset_iso": "2026-11-11T12:17:00+07:00",
+    "raw": "The user does not have a subscription. Usage: 9% of free weekly limit. Weekly limit resets Nov 18 at 12:17 PM WIB"
   }
 ]
