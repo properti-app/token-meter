@@ -157,14 +157,19 @@ async function load() {
     setGauge(s.usage_pct);
     document.getElementById("remain").textContent = (100 - s.usage_pct) + "%";
     const reset = new Date(s.reset_iso);
-    document.getElementById("status").textContent = "Terakhir dicek " + new Date(s.checked_at_utc).toLocaleString("id-ID", { timeZone: "Asia/Jakarta" }) + " WIB. Reset " + reset.toLocaleString("id-ID", { timeZone: "Asia/Jakarta" }) + " WIB.";
+    document.getElementById("status").textContent = "Terakhir dicek " + new Date(s.checked_at_utc).toLocaleString("id-ID", { timeZone: "Asia/Jakarta" }) + " WIB. Reset berikutnya " + reset.toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta", weekday: "long", day: "numeric", month: "long", year: "numeric" }) + ", " + reset.toLocaleTimeString("id-ID", { timeZone: "Asia/Jakarta", hour: "2-digit", minute: "2-digit" }) + " WIB.";
     function tick() {
       const ms = reset - new Date();
       if (ms <= 0) { document.getElementById("countdown").textContent = "Sudah reset"; return; }
-      const d = Math.floor(ms / 86400000), h2 = Math.floor(ms / 3600000) % 24, m = Math.floor(ms / 60000) % 60;
-      document.getElementById("countdown").textContent = d > 0 ? d + " hari " + h2 + " jam" : h2 + " jam " + m + " mnt";
+      const d = Math.floor(ms / 86400000), h2 = Math.floor(ms / 3600000) % 24, m = Math.floor(ms / 60000) % 60, s2 = Math.floor(ms / 1000) % 60;
+      var parts = [];
+      if (d > 0) parts.push(d + " hari");
+      if (d > 0 || h2 > 0) parts.push(h2 + " jam");
+      parts.push(m + " mnt");
+      parts.push(s2 + " dtk");
+      document.getElementById("countdown").textContent = parts.join(" ");
     }
-    tick(); setInterval(tick, 60000);
+    tick(); setInterval(tick, 1000);
     document.getElementById("history").innerHTML = h.slice(-8).reverse().map(function (e) {
       return "<li>" + e.usage_pct + "% &middot; " + new Date(e.checked_at_utc).toLocaleString("id-ID", { timeZone: "Asia/Jakarta" }) + " WIB</li>";
     }).join("") || "<li>Belum ada riwayat.</li>";
